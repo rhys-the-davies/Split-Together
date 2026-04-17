@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto, Poppins } from "next/font/google";
+import { AppFooter } from "@/components/AppFooter";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -31,7 +32,10 @@ export default function RootLayout({
       lang="en"
       className={`${roboto.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-full text-app-text" style={{ backgroundColor: "#FDFBF8" }}>{children}</body>
+      <body className="min-h-full flex flex-col text-app-text" style={{ backgroundColor: "#FDFBF8" }}>
+        <div className="flex-1">{children}</div>
+        <AppFooter />
+      </body>
     </html>
   );
 }

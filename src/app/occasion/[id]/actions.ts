@@ -37,7 +37,6 @@ export async function leaveOccasion(
   const member = await getAuthenticatedMember();
   if (!member) return { status: "error", error: "Not signed in." };
 
-  // Block if this member is the buyer on any active instance.
   const { data: activeBuyer } = await supabaseAdmin
     .from("occasion_instance")
     .select("id")
@@ -58,6 +57,29 @@ export async function leaveOccasion(
     .delete()
     .eq("occasion_id", occasionId)
     .eq("member_id", member.id);
+
+  redirect("/");
+}
+
+export async function deleteOccasion(
+  occasionId: string,
+  _prevState: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  const member = await getAuthenticatedMember();
+  if (!member) return { status: "error", error: "Not signed in." };
+
+  // Only allow deletion if this member is the sole remaining member.
+  const { data: memberships } = await supabaseAdmin
+    .from("occasion_member")
+    .select("member_id")
+    .eq("occasion_id", occasionId);
+
+  if (!memberships || memberships.length !== 1 || memberships[0].member_id !== member.id) {
+    return { status: "error", error: "You can only delete an occasion when you're the only member." };
+  }
+
+  await supabaseAdmin.from("occasion").delete().eq("id", occasionId);
 
   redirect("/");
 }

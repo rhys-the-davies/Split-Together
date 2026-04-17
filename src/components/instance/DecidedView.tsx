@@ -153,7 +153,7 @@ export function DecidedView({
             How to pay you back
           </p>
           <p className="mb-3 text-xs text-neutral-500">
-            Add a payment link from your bank app (Monzo, Starling, Revolut, etc.) or your sort code and account number. Contributors will receive this when you mark the gift as purchased.
+            Add a payment link from your bank app (Monzo, Starling, Revolut, etc.) or your sort code and account number. Contributors will receive this when you mark the gift as purchased. If anyone in the group is abroad, consider adding your IBAN or other international transfer details too.
           </p>
 
           <form action={bankFormAction} className="flex flex-col gap-3">

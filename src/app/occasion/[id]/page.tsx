@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { InvitePanel } from "@/components/occasion/InvitePanel";
-import { startNewInstance, leaveOccasion } from "./actions";
+import { startNewInstance, leaveOccasion, deleteOccasion } from "./actions";
 import { LeaveOccasionButton } from "@/components/occasion/LeaveOccasionButton";
 
 interface PageProps {
@@ -48,7 +48,7 @@ export default async function OccasionPage({ params }: PageProps) {
       .eq("occasion_id", id),
     supabaseAdmin
       .from("occasion_instance")
-      .select("id, year, status, archived_at, decided_gift:decided_gift_id(title)")
+      .select("id, year, status, archived_at, buyer_id, decided_gift:decided_gift_id(title)")
       .eq("occasion_id", id)
       .order("year", { ascending: false }),
   ]);
@@ -66,6 +66,8 @@ export default async function OccasionPage({ params }: PageProps) {
   const activeInstance = instances.find((i) => !i.archived_at) ?? null;
   const archivedInstances = instances.filter((i) => i.archived_at);
   const hasCurrentYearInstance = instances.some((i) => i.year === currentYear);
+  const isSoleMember = members.length === 1;
+  const isActiveBuyer = !!activeInstance && activeInstance.buyer_id === currentMember.id;
 
   const dateLabel =
     occasion.recurrence === "annual" && occasion.recurrence_month && occasion.recurrence_day
@@ -85,9 +87,17 @@ export default async function OccasionPage({ params }: PageProps) {
       </Link>
 
       <div className="mt-6 mb-8">
-        <h1 className="font-display text-2xl font-semibold text-app-text">
-          {occasion.title}
-        </h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="font-display text-2xl font-semibold text-app-text">
+            {occasion.title}
+          </h1>
+          <Link
+            href={`/occasion/${id}/edit`}
+            className="shrink-0 text-sm text-neutral-400 hover:text-neutral-600 transition-colors mt-1"
+          >
+            Edit
+          </Link>
+        </div>
         <p className="mt-1 text-sm text-neutral-500">
           Gift for {occasion.recipient_name} &middot; {dateLabel}
         </p>
@@ -215,7 +225,12 @@ export default async function OccasionPage({ params }: PageProps) {
       )}
 
       <div className="mt-12 border-t border-neutral-100 pt-6">
-        <LeaveOccasionButton action={leaveOccasion.bind(null, id)} />
+        <LeaveOccasionButton
+          leaveAction={leaveOccasion.bind(null, id)}
+          deleteAction={deleteOccasion.bind(null, id)}
+          isSoleMember={isSoleMember}
+          isActiveBuyer={isActiveBuyer}
+        />
       </div>
     </main>
   );

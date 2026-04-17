@@ -557,7 +557,7 @@ export async function markDone(
 
   if (error) return { status: "error", error: "Could not close this gift round." };
 
-  redirect(`/occasion/${occasionId}`);
+  redirect("/");
 }
 
 // ─── Unarchive ────────────────────────────────────────────────────────────────
