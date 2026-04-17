@@ -192,10 +192,10 @@ export default async function InstancePage({ params }: PageProps) {
       <div className="mt-6 mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-semibold text-app-text">
-            {year}
+            {occasion.recipient_name}&rsquo;s {year} gift
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Gift for {occasion.recipient_name}
+            {occasion.title}
           </p>
         </div>
         <StatusPill status={instance.status} />
@@ -245,7 +245,15 @@ export default async function InstancePage({ params }: PageProps) {
 
       {(isPlanning || isDecided) && (
         <section className="mb-8">
-          <SectionHeading>Gift suggestions ({suggestions.length})</SectionHeading>
+          <SectionHeading>
+            {suggestions.length > 0 ? `Gift suggestions (${suggestions.length})` : "Gift suggestions"}
+          </SectionHeading>
+
+          {isPlanning && suggestions.length === 0 && (
+            <p className="mt-2 mb-3 text-sm text-neutral-500">
+              No ideas yet — be the first to suggest one.
+            </p>
+          )}
 
           <div className="mt-3 flex flex-col gap-3">
             {suggestions.map((s) => {

@@ -203,9 +203,13 @@ export function DecidedView({
             {purchasedState?.status === "error" && (
               <p role="alert" className="text-sm text-danger">{purchasedState.error}</p>
             )}
-            {!canPurchase && (
+            {canPurchase ? (
               <p className="text-xs text-neutral-500">
-                Add a payment link or bank details above before marking as purchased.
+                This will email everyone their share and lock in the split.
+              </p>
+            ) : (
+              <p className="text-xs text-neutral-500">
+                Save payment details above to continue.
               </p>
             )}
             <Button
@@ -213,7 +217,7 @@ export function DecidedView({
               disabled={!canPurchase}
               loading={isMarkingPurchased}
             >
-              Mark as purchased
+              I&apos;ve bought it
             </Button>
           </form>
         </Card>

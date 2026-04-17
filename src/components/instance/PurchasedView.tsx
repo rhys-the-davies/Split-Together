@@ -193,7 +193,7 @@ export function PurchasedView({
               <p role="alert" className="text-sm text-danger">{revertState.error}</p>
             )}
             <p className="text-xs text-neutral-500">
-              Made a mistake? Revert to the decided state to adjust splits or bank details before purchasing again.
+              Need to adjust the split or payment details?
             </p>
             <button
               type="submit"
@@ -219,7 +219,7 @@ export function PurchasedView({
               </p>
             )}
             <Button variant="secondary" loading={isClosing}>
-              Close &amp; archive this gift round
+              Archive this round
             </Button>
           </form>
         </Card>
@@ -233,10 +233,10 @@ export function PurchasedView({
               <p role="alert" className="text-sm text-danger">{unarchiveState.error}</p>
             )}
             <p className="text-xs text-neutral-500">
-              Archived by mistake? You can reopen this round.
+              Archived by mistake?
             </p>
             <Button variant="secondary" loading={isUnarchiving}>
-              Reopen this gift round
+              Reopen this round
             </Button>
           </form>
         </Card>
