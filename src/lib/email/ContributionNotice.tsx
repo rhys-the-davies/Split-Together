@@ -57,12 +57,20 @@ export function ContributionNotice({
           </Section>
 
           <Text style={text}>
-            Please transfer your share to {buyerName} using the details below:
+            Please transfer your share to {buyerName}:
           </Text>
 
-          <Section style={bankBox}>
-            <Text style={bankText}>{bankDetails}</Text>
-          </Section>
+          {bankDetails.startsWith("http://") || bankDetails.startsWith("https://") ? (
+            <Section style={payLinkBox}>
+              <a href={bankDetails} style={payLink}>
+                Pay {buyerName} now →
+              </a>
+            </Section>
+          ) : (
+            <Section style={bankBox}>
+              <Text style={bankText}>{bankDetails}</Text>
+            </Section>
+          )}
 
           <Hr style={hr} />
 
@@ -149,4 +157,19 @@ const footer: React.CSSProperties = {
   color: "#9CA3AF",
   fontSize: "12px",
   margin: "0",
+};
+
+const payLinkBox: React.CSSProperties = {
+  marginBottom: "24px",
+};
+
+const payLink: React.CSSProperties = {
+  display: "inline-block",
+  backgroundColor: "#3B82F6",
+  color: "#ffffff",
+  borderRadius: "8px",
+  padding: "12px 20px",
+  fontSize: "14px",
+  fontWeight: "600",
+  textDecoration: "none",
 };

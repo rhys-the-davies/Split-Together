@@ -118,9 +118,20 @@ export function PurchasedView({
       {bankDetails && (
         <Card>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-400">
-            Payment details
+            How to pay {buyerName ?? "the buyer"} back
           </p>
-          <p className="whitespace-pre-wrap text-sm text-app-text">{bankDetails}</p>
+          {bankDetails.startsWith("http://") || bankDetails.startsWith("https://") ? (
+            <a
+              href={bankDetails}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
+            >
+              Pay now →
+            </a>
+          ) : (
+            <p className="whitespace-pre-wrap font-mono text-sm text-app-text">{bankDetails}</p>
+          )}
         </Card>
       )}
 

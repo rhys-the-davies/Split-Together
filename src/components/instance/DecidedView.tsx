@@ -50,6 +50,9 @@ export function DecidedView({
 
   const totalSplit = splits.reduce((sum, s) => sum + s.amount, 0);
   const canPurchase = !!bankDetails;
+  const bankDetailsIsUrl = bankDetails
+    ? bankDetails.startsWith("http://") || bankDetails.startsWith("https://")
+    : false;
 
   return (
     <div className="mb-8 flex flex-col gap-6">
@@ -147,11 +150,11 @@ export function DecidedView({
       {/* Bank details (buyer editable) */}
       {isBuyer && (
         <Card>
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-neutral-400">
-            Your bank details
+          <p className="mb-1 text-xs font-medium uppercase tracking-wide text-neutral-400">
+            How to pay you back
           </p>
           <p className="mb-3 text-xs text-neutral-500">
-            These will be shared with contributors when you mark the gift as purchased.
+            Add a payment link from your bank app (Monzo, Starling, Revolut, etc.) or your sort code and account number. Contributors will receive this when you mark the gift as purchased.
           </p>
 
           <form action={bankFormAction} className="flex flex-col gap-3">
@@ -162,12 +165,12 @@ export function DecidedView({
               name="bank_details"
               rows={3}
               defaultValue={bankDetails ?? ""}
-              placeholder="e.g. Sort code: 00-00-00, Account: 12345678"
+              placeholder="Paste a payment link or enter your sort code and account number"
               disabled={isSavingBank}
               className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm text-app-text placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 resize-none"
             />
             <Button type="submit" variant="secondary" loading={isSavingBank}>
-              {bankDetails ? "Update bank details" : "Save bank details"}
+              {bankDetails ? "Update" : "Save"}
             </Button>
           </form>
         </Card>
@@ -177,9 +180,20 @@ export function DecidedView({
       {!isBuyer && bankDetails && (
         <Card>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-400">
-            Buyer&apos;s bank details
+            How to pay {buyerName ?? "the buyer"} back
           </p>
-          <p className="whitespace-pre-wrap text-sm text-app-text">{bankDetails}</p>
+          {bankDetailsIsUrl ? (
+            <a
+              href={bankDetails}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 transition-colors"
+            >
+              Pay now →
+            </a>
+          ) : (
+            <p className="whitespace-pre-wrap font-mono text-sm text-app-text">{bankDetails}</p>
+          )}
         </Card>
       )}
 
@@ -192,7 +206,7 @@ export function DecidedView({
             )}
             {!canPurchase && (
               <p className="text-xs text-neutral-500">
-                Add your bank details above before marking as purchased.
+                Add a payment link or bank details above before marking as purchased.
               </p>
             )}
             <Button
