@@ -249,12 +249,6 @@ export default async function InstancePage({ params }: PageProps) {
             {suggestions.length > 0 ? `Gift suggestions (${suggestions.length})` : "Gift suggestions"}
           </SectionHeading>
 
-          {isPlanning && suggestions.length === 0 && (
-            <p className="mt-2 mb-3 text-sm text-neutral-500">
-              No ideas yet — be the first to suggest one.
-            </p>
-          )}
-
           <div className="mt-3 flex flex-col gap-3">
             {suggestions.map((s) => {
               const boundEdit = editSuggestion.bind(null, s.id, occasionId);
