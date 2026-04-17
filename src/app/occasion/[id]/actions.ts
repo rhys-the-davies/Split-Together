@@ -79,7 +79,29 @@ export async function deleteOccasion(
     return { status: "error", error: "You can only delete an occasion when you're the only member." };
   }
 
-  await supabaseAdmin.from("occasion").delete().eq("id", occasionId);
+  // occasion_instance has ON DELETE RESTRICT, so delete instances first.
+  // Null decided_gift_id first to break the circular FK with gift_suggestion.
+  await supabaseAdmin
+    .from("occasion_instance")
+    .update({ decided_gift_id: null })
+    .eq("occasion_id", occasionId);
+
+  // Deleting instances cascades to gift_suggestion, gift_vote, split, contribution.
+  await supabaseAdmin
+    .from("occasion_instance")
+    .delete()
+    .eq("occasion_id", occasionId);
+
+  // Deleting the occasion cascades to occasion_member.
+  const { error } = await supabaseAdmin
+    .from("occasion")
+    .delete()
+    .eq("id", occasionId);
+
+  if (error) {
+    console.error("[deleteOccasion] Failed:", error);
+    return { status: "error", error: "Could not delete the occasion. Please try again." };
+  }
 
   redirect("/");
 }
