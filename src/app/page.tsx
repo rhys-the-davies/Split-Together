@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedMember } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { OccasionList } from "@/components/home/OccasionList";
+import { OutstandingPanel, type OwedToMeItem } from "@/components/home/OutstandingPanel";
 import type { Enums } from "@/lib/database.types";
 
 interface OccasionRow {
@@ -20,16 +21,7 @@ interface OccasionRow {
 }
 
 export default async function HomePage() {
-  const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: currentMember } = await supabaseAdmin
-    .from("member")
-    .select("id")
-    .eq("auth_id", user.id)
-    .single();
+  const currentMember = await getAuthenticatedMember();
   if (!currentMember) redirect("/login");
 
   const { data: memberships } = await supabaseAdmin
@@ -40,6 +32,7 @@ export default async function HomePage() {
   const occasionIds = (memberships ?? []).map((m) => m.occasion_id);
 
   let occasions: OccasionRow[] = [];
+  const owedToMeItems: OwedToMeItem[] = [];
 
   if (occasionIds.length > 0) {
     const { data: rows } = await supabaseAdmin
@@ -48,7 +41,7 @@ export default async function HomePage() {
       .in("id", occasionIds)
       .order("created_at", { ascending: false });
 
-    // Find purchased instances where the current member is the buyer.
+    // Purchased instances where the current member is the buyer (for badge counts + "You're owed" panel).
     const purchasedBuyerInstanceIds = (rows ?? [])
       .flatMap((row) => row.occasion_instance ?? [])
       .filter((i: { status: string; archived_at: string | null; buyer_id: string | null }) =>
@@ -56,17 +49,36 @@ export default async function HomePage() {
       )
       .map((i: { id: string }) => i.id);
 
-    // Fetch unpaid contribution counts for those instances in one query.
     const unpaidByInstance: Record<string, number> = {};
-    if (purchasedBuyerInstanceIds.length > 0) {
-      const { data: unpaid } = await supabaseAdmin
-        .from("contribution")
-        .select("instance_id")
-        .in("instance_id", purchasedBuyerInstanceIds)
-        .is("made_at", null);
 
-      for (const row of unpaid ?? []) {
-        unpaidByInstance[row.instance_id] = (unpaidByInstance[row.instance_id] ?? 0) + 1;
+    type RawBuyerInst = { year: number; occasion_id: string; occasion: { title: string } | null } | null;
+
+    const { data: unpaidRows } = purchasedBuyerInstanceIds.length > 0
+      ? await supabaseAdmin
+          .from("contribution")
+          .select(`
+            id, amount, instance_id,
+            contributor:member!contributor_id(name),
+            instance:instance_id(year, occasion_id, occasion:occasion_id(title))
+          `)
+          .in("instance_id", purchasedBuyerInstanceIds)
+          .is("made_at", null)
+      : { data: null };
+
+    for (const row of unpaidRows ?? []) {
+      unpaidByInstance[row.instance_id] = (unpaidByInstance[row.instance_id] ?? 0) + 1;
+      const inst = row.instance as RawBuyerInst;
+      const contributor = row.contributor as { name: string } | null;
+      if (inst && contributor) {
+        owedToMeItems.push({
+          contributionId: row.id,
+          instanceId: row.instance_id,
+          occasionId: inst.occasion_id,
+          occasionTitle: inst.occasion?.title ?? "",
+          year: inst.year,
+          contributorName: contributor.name,
+          amount: Number(row.amount),
+        });
       }
     }
 
@@ -96,6 +108,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
+      <OutstandingPanel owedToMe={owedToMeItems} />
       <OccasionList occasions={occasions} />
     </main>
   );

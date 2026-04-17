@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getAuthenticatedMember } from "@/lib/auth";
-import { EditOccasionForm } from "@/components/occasion/EditOccasionForm";
+import { CreateOccasionForm } from "@/components/occasion/CreateOccasionForm";
 import { updateOccasion } from "./actions";
 
 interface PageProps {
@@ -44,7 +44,7 @@ export default async function EditOccasionPage({ params }: PageProps) {
         <h1 className="font-display text-2xl font-semibold text-app-text">Edit occasion</h1>
       </div>
 
-      <EditOccasionForm
+      <CreateOccasionForm
         action={updateOccasion.bind(null, id)}
         defaultValues={{
           title: occasion.title,
@@ -53,6 +53,7 @@ export default async function EditOccasionPage({ params }: PageProps) {
           recurrenceMonth: occasion.recurrence_month,
           recurrenceDay: occasion.recurrence_day,
         }}
+        submitLabel="Save changes"
       />
     </main>
   );

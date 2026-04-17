@@ -25,17 +25,19 @@ export async function updateOccasion(
   const title = (formData.get("title") as string)?.trim();
   const recipientName = (formData.get("recipient_name") as string)?.trim();
   const recurrence = formData.get("recurrence") as "one_off" | "annual";
-  const recurrenceMonthRaw = formData.get("recurrence_month") as string | null;
-  const recurrenceDayRaw = formData.get("recurrence_day") as string | null;
+  const recurrenceMonth = recurrence === "annual"
+    ? parseInt(formData.get("recurrence_month") as string, 10)
+    : null;
+  const recurrenceDay = recurrence === "annual"
+    ? parseInt(formData.get("recurrence_day") as string, 10)
+    : null;
 
   if (!title || !recipientName) {
     return { status: "error", error: "Title and recipient name are required." };
   }
 
   if (recurrence === "annual") {
-    const month = parseInt(recurrenceMonthRaw ?? "", 10);
-    const day = parseInt(recurrenceDayRaw ?? "", 10);
-    if (!month || !day || month < 1 || month > 12 || day < 1 || day > 31) {
+    if (!recurrenceMonth || !recurrenceDay || recurrenceMonth < 1 || recurrenceMonth > 12 || recurrenceDay < 1 || recurrenceDay > 31) {
       return { status: "error", error: "Annual occasions require a valid month and day." };
     }
   }
@@ -46,8 +48,8 @@ export async function updateOccasion(
       title,
       recipient_name: recipientName,
       recurrence,
-      recurrence_month: recurrence === "annual" ? parseInt(recurrenceMonthRaw!, 10) : null,
-      recurrence_day: recurrence === "annual" ? parseInt(recurrenceDayRaw!, 10) : null,
+      recurrence_month: recurrenceMonth,
+      recurrence_day: recurrenceDay,
     })
     .eq("id", occasionId);
 

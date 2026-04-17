@@ -6,19 +6,31 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { Select } from "@/components/ui/Select";
+import { MONTH_NAMES } from "@/lib/utils";
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+interface DefaultValues {
+  title?: string;
+  recipientName?: string;
+  recurrence?: "one_off" | "annual";
+  recurrenceMonth?: number | null;
+  recurrenceDay?: number | null;
+}
 
 interface CreateOccasionFormProps {
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
+  defaultValues?: DefaultValues;
+  submitLabel?: string;
 }
 
-export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
+export function CreateOccasionForm({
+  action,
+  defaultValues,
+  submitLabel = "Create occasion",
+}: CreateOccasionFormProps) {
   const [state, formAction, isPending] = useActionState(action, null);
-  const [recurrence, setRecurrence] = useState<"one_off" | "annual">("one_off");
+  const [recurrence, setRecurrence] = useState<"one_off" | "annual">(
+    defaultValues?.recurrence ?? "one_off"
+  );
 
   return (
     <form action={formAction} className="flex flex-col gap-5" noValidate>
@@ -37,6 +49,7 @@ export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
           name="title"
           type="text"
           placeholder="e.g. Mum's birthday"
+          defaultValue={defaultValues?.title}
           required
           disabled={isPending}
         />
@@ -48,6 +61,7 @@ export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
           name="recipient_name"
           type="text"
           placeholder="e.g. Mum"
+          defaultValue={defaultValues?.recipientName}
           required
           disabled={isPending}
         />
@@ -72,16 +86,12 @@ export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
             <Select
               id="recurrence_month"
               name="recurrence_month"
-              defaultValue=""
+              defaultValue={defaultValues?.recurrenceMonth ?? ""}
               disabled={isPending}
             >
-              <option value="" disabled>
-                Select month
-              </option>
-              {MONTHS.map((month, i) => (
-                <option key={month} value={i + 1}>
-                  {month}
-                </option>
+              <option value="" disabled>Select month</option>
+              {MONTH_NAMES.map((month, i) => (
+                <option key={month} value={i + 1}>{month}</option>
               ))}
             </Select>
           </FormField>
@@ -94,6 +104,7 @@ export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
               min={1}
               max={31}
               placeholder="e.g. 15"
+              defaultValue={defaultValues?.recurrenceDay ?? ""}
               disabled={isPending}
             />
           </FormField>
@@ -101,7 +112,7 @@ export function CreateOccasionForm({ action }: CreateOccasionFormProps) {
       )}
 
       <Button type="submit" loading={isPending} fullWidth>
-        Create occasion
+        {submitLabel}
       </Button>
     </form>
   );

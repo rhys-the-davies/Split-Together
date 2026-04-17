@@ -1,21 +1,7 @@
 import Link from "next/link";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { formatOccasionDate } from "@/lib/utils";
 import type { Enums } from "@/lib/database.types";
-
-const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 interface OccasionCardProps {
   id: string;
@@ -41,10 +27,7 @@ export function OccasionCard({
   recurrence_day,
   instance,
 }: OccasionCardProps) {
-  const dateLabel =
-    recurrence === "annual" && recurrence_month && recurrence_day
-      ? `${MONTH_NAMES[recurrence_month - 1]} ${recurrence_day}`
-      : "One-off";
+  const dateLabel = formatOccasionDate(recurrence, recurrence_month, recurrence_day);
 
   return (
     <Link
@@ -62,9 +45,9 @@ export function OccasionCard({
         </div>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
           {instance && <StatusPill status={instance.status} />}
-          {(instance?.unpaidCount ?? 0) > 0 && (
+          {instance && instance.unpaidCount > 0 && (
             <span className="inline-flex items-center rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
-              {instance!.unpaidCount} unpaid
+              {instance.unpaidCount} unpaid
             </span>
           )}
         </div>

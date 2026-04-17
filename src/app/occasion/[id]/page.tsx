@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getAuthenticatedMember } from "@/lib/auth";
+import { formatOccasionDate } from "@/lib/utils";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
@@ -14,34 +15,18 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 export default async function OccasionPage({ params }: PageProps) {
   const { id } = await params;
 
   const currentMember = await getAuthenticatedMember();
   if (!currentMember) redirect("/login");
 
-  const [{ data: membership }, { data: occasion }] = await Promise.all([
-    supabaseAdmin
-      .from("occasion_member")
-      .select("occasion_id")
-      .eq("occasion_id", id)
-      .eq("member_id", currentMember.id)
-      .maybeSingle(),
+  const [{ data: occasion }, { data: rawMemberships }, { data: rawInstances }] = await Promise.all([
     supabaseAdmin
       .from("occasion")
       .select("id, title, recipient_name, recurrence, recurrence_month, recurrence_day, invite_token")
       .eq("id", id)
       .single(),
-  ]);
-  if (!membership) notFound();
-  if (!occasion) notFound();
-
-  const [{ data: memberships }, { data: rawInstances }] = await Promise.all([
     supabaseAdmin
       .from("occasion_member")
       .select("member:member_id(id, name)")
@@ -53,9 +38,13 @@ export default async function OccasionPage({ params }: PageProps) {
       .order("year", { ascending: false }),
   ]);
 
-  const members = (memberships ?? [])
+  if (!occasion) notFound();
+
+  const members = (rawMemberships ?? [])
     .map((m) => m.member as { id: string; name: string } | null)
     .filter((m): m is { id: string; name: string } => !!m);
+
+  if (!members.some((m) => m.id === currentMember.id)) notFound();
 
   const instances = (rawInstances ?? []).map((i) => ({
     ...i,
@@ -69,10 +58,7 @@ export default async function OccasionPage({ params }: PageProps) {
   const isSoleMember = members.length === 1;
   const isActiveBuyer = !!activeInstance && activeInstance.buyer_id === currentMember.id;
 
-  const dateLabel =
-    occasion.recurrence === "annual" && occasion.recurrence_month && occasion.recurrence_day
-      ? `${MONTH_NAMES[occasion.recurrence_month - 1]} ${occasion.recurrence_day}`
-      : "One-off";
+  const dateLabel = formatOccasionDate(occasion.recurrence, occasion.recurrence_month, occasion.recurrence_day);
 
   const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/join/${occasion.invite_token}`;
   const boundStartNewInstance = startNewInstance.bind(null, id);
