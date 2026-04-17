@@ -51,7 +51,7 @@ export default async function JoinPage({ params }: PageProps) {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="font-display text-2xl font-semibold text-app-text">
-            Chip In
+            Split Together
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
             You&rsquo;ve been invited to join a group gift.

@@ -17,7 +17,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Chip In",
+  title: "Split Together",
   description: "Gift coordination for families and close friends.",
 };
 

@@ -52,7 +52,7 @@ export async function sendContributionNotices(opts: SendOptions): Promise<void> 
       const { data, error } = await resend.emails.send({
         from: FROM_EMAIL,
         to: contributor.email,
-        subject: `Time to chip in — ${recipientName}'s ${year} gift`,
+        subject: `Time to split — ${recipientName}'s ${year} gift`,
         html,
       });
 

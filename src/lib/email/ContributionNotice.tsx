@@ -41,12 +41,14 @@ export function ContributionNotice({
       <Preview>{preview}</Preview>
       <Body style={body}>
         <Container style={container}>
-          <Heading style={h1}>Time to chip in 🎁</Heading>
+          <Heading style={h1}>Split Together</Heading>
 
           <Text style={text}>Hi {contributorName},</Text>
 
           <Text style={text}>
-            The group has purchased {recipientName}&apos;s {year} gift — <strong>{giftTitle}</strong> (£{giftPrice.toFixed(2)}) — and <strong>{buyerName}</strong> fronted the cost.
+            The group has purchased {recipientName}&apos;s {year} gift —{" "}
+            <strong>{giftTitle}</strong> (£{giftPrice.toFixed(2)}) — and{" "}
+            <strong>{buyerName}</strong> fronted the cost.
           </Text>
 
           <Section style={amountBox}>
@@ -65,7 +67,7 @@ export function ContributionNotice({
           <Hr style={hr} />
 
           <Text style={footer}>
-            Chip In · {occasionTitle} · {year}
+            Split Together · {occasionTitle} · {year}
           </Text>
         </Container>
       </Body>
@@ -76,13 +78,11 @@ export function ContributionNotice({
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const body: React.CSSProperties = {
-  backgroundColor: "#FAF7F2",
+  backgroundColor: "#ffffff",
   fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
 };
 
 const container: React.CSSProperties = {
-  backgroundColor: "#ffffff",
-  borderRadius: "12px",
   margin: "32px auto",
   maxWidth: "520px",
   padding: "40px 48px",
