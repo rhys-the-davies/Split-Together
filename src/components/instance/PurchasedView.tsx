@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { type ActionState } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { isHttpUrl } from "@/lib/utils";
 
 interface Contribution {
   id: string;
@@ -120,7 +121,7 @@ export function PurchasedView({
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-400">
             How to pay {buyerName ?? "the buyer"} back
           </p>
-          {bankDetails.startsWith("http://") || bankDetails.startsWith("https://") ? (
+          {isHttpUrl(bankDetails) ? (
             <a
               href={bankDetails}
               target="_blank"

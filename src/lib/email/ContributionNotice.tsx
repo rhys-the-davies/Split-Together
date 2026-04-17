@@ -9,6 +9,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { isHttpUrl } from "@/lib/utils";
 
 interface ContributionNoticeProps {
   contributorName: string;
@@ -60,7 +61,7 @@ export function ContributionNotice({
             Please transfer your share to {buyerName}:
           </Text>
 
-          {bankDetails.startsWith("http://") || bankDetails.startsWith("https://") ? (
+          {isHttpUrl(bankDetails) ? (
             <Section style={payLinkBox}>
               <a href={bankDetails} style={payLink}>
                 Pay {buyerName} now →

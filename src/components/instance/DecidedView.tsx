@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { ExternalLink } from "@/components/ui/ExternalLink";
+import { isHttpUrl } from "@/lib/utils";
 
 interface Split {
   id: string;
@@ -50,9 +51,7 @@ export function DecidedView({
 
   const totalSplit = splits.reduce((sum, s) => sum + s.amount, 0);
   const canPurchase = !!bankDetails;
-  const bankDetailsIsUrl = bankDetails
-    ? bankDetails.startsWith("http://") || bankDetails.startsWith("https://")
-    : false;
+  const bankDetailsIsUrl = bankDetails ? isHttpUrl(bankDetails) : false;
 
   return (
     <div className="mb-8 flex flex-col gap-6">

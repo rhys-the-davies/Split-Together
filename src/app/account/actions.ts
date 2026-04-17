@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getAuthenticatedMember } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
 import { type ActionState } from "@/lib/types";
 
 export async function deleteAccount(
@@ -13,7 +12,6 @@ export async function deleteAccount(
   const member = await getAuthenticatedMember();
   if (!member) return { status: "error", error: "Not signed in." };
 
-  // Block if they're the buyer on any active (non-archived) instance.
   const { data: activeBuyer } = await supabaseAdmin
     .from("occasion_instance")
     .select("id")
@@ -28,18 +26,9 @@ export async function deleteAccount(
     };
   }
 
-  // Get the Supabase auth user ID.
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { status: "error", error: "Not signed in." };
-
-  // Remove auth_id from member row (preserves history) then delete auth user.
-  await supabaseAdmin
-    .from("member")
-    .update({ auth_id: null })
-    .eq("id", member.id);
-
-  await supabaseAdmin.auth.admin.deleteUser(user.id);
+  // Null auth_id first to preserve historical member data, then delete the auth user.
+  await supabaseAdmin.from("member").update({ auth_id: null }).eq("id", member.id);
+  await supabaseAdmin.auth.admin.deleteUser(member.authId);
 
   redirect("/login");
 }
