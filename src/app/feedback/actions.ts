@@ -1,7 +1,7 @@
 "use server";
 
 import { getAuthenticatedMember } from "@/lib/auth";
-import { resend } from "@/lib/email/resend";
+import { resend, FROM_EMAIL } from "@/lib/email/resend";
 import { type ActionState } from "@/lib/types";
 
 export async function submitFeedback(
@@ -15,7 +15,7 @@ export async function submitFeedback(
   if (!message) return { status: "error", error: "Please enter a message." };
 
   const { error } = await resend.emails.send({
-    from: `Split Together <noreply@mail.splittogether.co.uk>`,
+    from: FROM_EMAIL,
     to: "rhys.michael.davies@gmail.com",
     subject: `Feedback from ${member.email}`,
     text: `From: ${member.email}\n\n${message}`,
@@ -26,5 +26,5 @@ export async function submitFeedback(
     return { status: "error", error: "Could not send feedback. Please try again." };
   }
 
-  return null;
+  return { status: "success" };
 }

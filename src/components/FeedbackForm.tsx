@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { type ActionState } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
@@ -9,14 +9,9 @@ interface FeedbackFormProps {
 }
 
 export function FeedbackForm({ action }: FeedbackFormProps) {
-  const [submitted, setSubmitted] = useState(false);
-  const [state, formAction, isPending] = useActionState(async (prev: ActionState, fd: FormData) => {
-    const result = await action(prev, fd);
-    if (result === null) setSubmitted(true);
-    return result;
-  }, null);
+  const [state, formAction, isPending] = useActionState(action, null);
 
-  if (submitted) {
+  if (state?.status === "success") {
     return <p className="text-sm text-neutral-500">Thanks — message sent.</p>;
   }
 
