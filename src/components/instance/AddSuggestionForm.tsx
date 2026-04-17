@@ -26,9 +26,9 @@ export function AddSuggestionForm({ action }: AddSuggestionFormProps) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-xl border border-dashed border-neutral-300 bg-white py-3 text-sm text-neutral-500 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
+        className="w-full rounded-xl border border-dashed border-neutral-300 bg-white py-4 text-sm font-medium text-neutral-500 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-colors"
       >
-        + Add suggestion
+        + Suggest a gift
       </button>
     );
   }

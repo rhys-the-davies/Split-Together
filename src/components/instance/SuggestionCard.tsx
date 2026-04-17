@@ -67,46 +67,18 @@ export function SuggestionCard({
         {editState?.status === "error" && (
           <p role="alert" className="text-sm text-danger">{editState.error}</p>
         )}
-
         <FormField label="Gift title" htmlFor={`edit-title-${id}`} required>
-          <Input
-            id={`edit-title-${id}`}
-            name="title"
-            type="text"
-            defaultValue={title}
-            required
-            disabled={isEditing}
-          />
+          <Input id={`edit-title-${id}`} name="title" type="text" defaultValue={title} required disabled={isEditing} />
         </FormField>
-
         <FormField label="URL" htmlFor={`edit-url-${id}`}>
-          <Input
-            id={`edit-url-${id}`}
-            name="url"
-            type="url"
-            defaultValue={url ?? ""}
-            disabled={isEditing}
-          />
+          <Input id={`edit-url-${id}`} name="url" type="url" defaultValue={url ?? ""} disabled={isEditing} />
         </FormField>
-
         <FormField label="Price (£)" htmlFor={`edit-price-${id}`} required>
-          <Input
-            id={`edit-price-${id}`}
-            name="price"
-            type="number"
-            min="0"
-            step="0.01"
-            defaultValue={price}
-            required
-            disabled={isEditing}
-          />
+          <Input id={`edit-price-${id}`} name="price" type="number" min="0" step="0.01" defaultValue={price} required disabled={isEditing} />
         </FormField>
-
         <div className="flex gap-2">
           <Button type="submit" loading={isEditing}>Save</Button>
-          <Button type="button" variant="secondary" onClick={() => setEditing(false)} disabled={isEditing}>
-            Cancel
-          </Button>
+          <Button type="button" variant="secondary" onClick={() => setEditing(false)} disabled={isEditing}>Cancel</Button>
         </div>
       </form>
     );
@@ -124,45 +96,41 @@ export function SuggestionCard({
       )}
 
       <div className="flex items-start justify-between gap-3">
+        {/* Main info */}
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-app-text">{title}</p>
-          <p className="mt-0.5 text-sm font-semibold text-neutral-700">
+          <p className="font-semibold text-app-text leading-snug">{title}</p>
+          <p className="mt-1 text-2xl font-bold text-app-text tracking-tight">
             £{price.toFixed(2)}
           </p>
-          {url && <ExternalLink href={url} className="mt-1 block" />}
+          {url && <ExternalLink href={url} className="mt-1.5 block" />}
         </div>
 
-        {/* Vote button — only when not read-only */}
+        {/* Vote chip */}
         {!readOnly && toggleVoteAction && (
-          <form
-            action={(fd) => {
-              startVoteTransition(() => toggleVoteAction(fd));
-            }}
-          >
+          <form action={(fd) => { startVoteTransition(() => toggleVoteAction(fd)); }}>
             <button
               type="submit"
               disabled={isVoting}
+              aria-label={hasVoted ? "Remove vote" : "Vote for this"}
               className={[
-                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                "flex flex-col items-center gap-0.5 rounded-xl px-3 py-2 transition-colors min-w-[48px]",
                 hasVoted
                   ? "bg-primary text-white"
-                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200",
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200",
                 isVoting ? "opacity-50" : "",
               ].join(" ")}
-              aria-label={hasVoted ? "Remove vote" : "Vote for this"}
             >
-              <span>👍</span>
-              <span>{voteCount}</span>
+              <span className="text-base leading-none">▲</span>
+              <span className="text-sm font-semibold leading-none">{voteCount}</span>
             </button>
           </form>
         )}
 
-        {/* Vote count (read-only) */}
         {readOnly && voteCount > 0 && (
-          <span className="flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1.5 text-sm text-neutral-600">
-            <span>👍</span>
-            <span>{voteCount}</span>
-          </span>
+          <div className="flex flex-col items-center gap-0.5 rounded-xl bg-neutral-100 px-3 py-2 min-w-[48px]">
+            <span className="text-base leading-none text-neutral-400">▲</span>
+            <span className="text-sm font-semibold leading-none text-neutral-500">{voteCount}</span>
+          </div>
         )}
       </div>
 
@@ -172,7 +140,7 @@ export function SuggestionCard({
           {isOwn && editAction && (
             <button
               onClick={() => setEditing(true)}
-              className="text-xs text-neutral-500 hover:text-neutral-700 transition-colors"
+              className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
             >
               Edit
             </button>
@@ -182,7 +150,7 @@ export function SuggestionCard({
               <button
                 type="submit"
                 disabled={isDeleting}
-                className="text-xs text-danger hover:text-danger/80 disabled:opacity-50 transition-colors"
+                className="text-xs text-danger/60 hover:text-danger disabled:opacity-50 transition-colors"
               >
                 {isDeleting ? "Deleting…" : "Delete"}
               </button>
@@ -193,9 +161,9 @@ export function SuggestionCard({
               <button
                 type="submit"
                 disabled={isMarkingDecided}
-                className="text-xs font-medium text-primary hover:text-primary/80 disabled:opacity-50 transition-colors"
+                className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
-                {isMarkingDecided ? "Deciding…" : "Mark as decided"}
+                {isMarkingDecided ? "Deciding…" : "Choose this gift"}
               </button>
             </form>
           )}
