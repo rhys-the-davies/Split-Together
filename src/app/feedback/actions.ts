@@ -16,7 +16,7 @@ export async function submitFeedback(
 
   const { error } = await resend.emails.send({
     from: `Split Together <noreply@mail.splittogether.co.uk>`,
-    to: "rhys@studio-rhys.com",
+    to: "rhys.michael.davies@gmail.com",
     subject: `Feedback from ${member.email}`,
     text: `From: ${member.email}\n\n${message}`,
   });
