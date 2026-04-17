@@ -164,7 +164,7 @@ export async function assignBuyer(
     giftPrice = gift?.price ?? 0;
   }
 
-  // Update buyer and fetch new contributor list in parallel.
+  // Update buyer and fetch all members in parallel.
   const [{ error: updateError }, { data: contributors }] = await Promise.all([
     supabaseAdmin
       .from("occasion_instance")
@@ -173,8 +173,7 @@ export async function assignBuyer(
     supabaseAdmin
       .from("occasion_member")
       .select("member_id")
-      .eq("occasion_id", instance.occasion_id)
-      .neq("member_id", buyerId),
+      .eq("occasion_id", instance.occasion_id),
   ]);
 
   if (updateError) return { status: "error", error: "Could not assign buyer." };
@@ -236,7 +235,7 @@ export async function markDecided(
     .eq("id", instanceId);
   if (iErr) return { status: "error", error: "Could not update instance." };
 
-  // Recalculate equal splits now that the gift price is known.
+  // Recalculate equal splits (all members including buyer) now that the gift price is known.
   if (suggestionData && suggestionData.price > 0) {
     const { data: existingSplits } = await supabaseAdmin
       .from("split")
