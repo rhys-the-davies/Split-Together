@@ -55,6 +55,18 @@ export function DecidedView({
 
   return (
     <div className="mb-8 flex flex-col gap-6">
+      {/* Orientation banner */}
+      <div className="rounded-xl border border-success/20 bg-success/5 px-4 py-3">
+        <p className="font-semibold text-app-text">Gift decided! 🎉</p>
+        <p className="mt-0.5 text-sm text-neutral-500">
+          {isBuyer
+            ? "You're buying — confirm the split and add payment details, then mark it purchased."
+            : buyerName
+            ? `${buyerName} is buying. You'll get an email when it's time to pay your share.`
+            : "Waiting for the buyer to confirm payment details."}
+        </p>
+      </div>
+
       {/* Decided gift summary */}
       <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-primary">
