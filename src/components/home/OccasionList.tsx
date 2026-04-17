@@ -13,6 +13,7 @@ interface Occasion {
     id: string;
     year: number;
     status: Enums<"instance_status">;
+    unpaidCount: number;
   } | null;
 }
 

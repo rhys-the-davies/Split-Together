@@ -28,6 +28,7 @@ interface OccasionCardProps {
     id: string;
     year: number;
     status: Enums<"instance_status">;
+    unpaidCount: number;
   } | null;
 }
 
@@ -59,7 +60,14 @@ export function OccasionCard({
             Gift for {recipient_name}
           </p>
         </div>
-        {instance && <StatusPill status={instance.status} />}
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          {instance && <StatusPill status={instance.status} />}
+          {(instance?.unpaidCount ?? 0) > 0 && (
+            <span className="inline-flex items-center rounded-full bg-warning/15 px-2 py-0.5 text-xs font-medium text-warning">
+              {instance!.unpaidCount} unpaid
+            </span>
+          )}
+        </div>
       </div>
       <p className="mt-3 text-xs text-neutral-400">{dateLabel}</p>
     </Link>
