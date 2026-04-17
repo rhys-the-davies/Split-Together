@@ -97,7 +97,10 @@ export function PurchasedView({
   const [doneState, doneFormAction, isClosing] = useActionState(markDoneAction, null);
   const [unarchiveState, unarchiveFormAction, isUnarchiving] = useActionState(unarchiveAction, null);
   const [revertState, revertFormAction, isReverting] = useActionState(revertPurchaseAction, null);
-  const allPaid = contributions.every((c) => !!c.madeAt);
+  const paidCount = contributions.filter((c) => !!c.madeAt).length;
+  const totalCount = contributions.length;
+  const allPaid = paidCount === totalCount;
+  const progressPct = totalCount > 0 ? Math.round((paidCount / totalCount) * 100) : 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -138,9 +141,26 @@ export function PurchasedView({
 
       {/* Contributions */}
       <Card>
-        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-neutral-400">
-          Contributions
-        </p>
+        <div className="mb-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
+              Contributions
+            </p>
+            {allPaid ? (
+              <span className="text-xs font-semibold text-success">Everyone&apos;s paid ✓</span>
+            ) : (
+              <span className="text-xs text-neutral-500">
+                {paidCount} of {totalCount} paid
+              </span>
+            )}
+          </div>
+          <div className="h-1.5 w-full rounded-full bg-neutral-100 overflow-hidden">
+            <div
+              className={["h-full rounded-full transition-all", allPaid ? "bg-success" : "bg-primary"].join(" ")}
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+        </div>
         <div className="divide-y divide-neutral-100">
           {buyerName && (
             <div className="flex items-center justify-between gap-3 py-3">
