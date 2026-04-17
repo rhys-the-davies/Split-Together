@@ -20,7 +20,7 @@ export default async function JoinPage({ params }: PageProps) {
 
   if (!occasion) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4">
+      <main className="flex items-start justify-center px-4">
         <div className="w-full max-w-sm text-center">
           <h1 className="font-display text-xl font-semibold text-app-text">
             Invalid invite link
@@ -47,7 +47,7 @@ export default async function JoinPage({ params }: PageProps) {
   const boundAction = joinOccasion.bind(null, invite_token);
 
   return (
-    <main className="flex min-h-screen items-start justify-center px-4 pt-12 pb-8">
+    <main className="flex items-start justify-center px-4 pt-12 pb-8">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="font-display text-2xl font-semibold text-app-text">

@@ -1,6 +1,6 @@
 export default function CheckEmailPage() {
   return (
-    <main className="flex min-h-screen items-start justify-center px-4 pt-12">
+    <main className="flex items-start justify-center px-4 pt-12">
       <div className="w-full max-w-sm text-center">
         <div className="mb-4 text-4xl" role="img" aria-label="Email">
           ✉️
