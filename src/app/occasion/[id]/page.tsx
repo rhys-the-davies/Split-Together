@@ -7,7 +7,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { InvitePanel } from "@/components/occasion/InvitePanel";
-import { startNewInstance } from "./actions";
+import { startNewInstance, leaveOccasion } from "./actions";
+import { LeaveOccasionButton } from "@/components/occasion/LeaveOccasionButton";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -212,6 +213,10 @@ export default async function OccasionPage({ params }: PageProps) {
           )}
         </>
       )}
+
+      <div className="mt-12 border-t border-neutral-100 pt-6">
+        <LeaveOccasionButton action={leaveOccasion.bind(null, id)} />
+      </div>
     </main>
   );
 }

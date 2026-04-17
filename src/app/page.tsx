@@ -67,8 +67,13 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10">
+    <main className="mx-auto max-w-2xl px-4 py-10 pb-16">
       <OccasionList occasions={occasions} />
+      <div className="mt-12 border-t border-neutral-100 pt-6 text-center">
+        <a href="/account" className="text-sm text-neutral-400 hover:text-neutral-600 transition-colors">
+          Account settings
+        </a>
+      </div>
     </main>
   );
 }
