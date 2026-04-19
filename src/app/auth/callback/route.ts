@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const { data: memberCheck } = await supabaseAdmin
       .from("member")
       .select("id")
-      .eq("email", email)
+      .ilike("email", email)
       .maybeSingle();
 
     if (!memberCheck) {
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     await supabaseAdmin
       .from("member")
       .update({ auth_id: authId })
-      .eq("email", email);
+      .ilike("email", email);
   }
 
   return Response.redirect(`${origin}${next}`);
